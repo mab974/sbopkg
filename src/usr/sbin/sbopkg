@@ -879,14 +879,16 @@ check_for_updates() {
                         >> $UPDATELIST
                     echo "$NAME" >> $SBOPKGTMP/sbopkg-update-queue
                 elif [[ $UPDATED -eq -1 ]]; then
-                    echo $NAME: >> $UPDATELIST
-                    echo "  INSTALLED PACKAGE IS NEWER THAN REPO" \
-                        >> $UPDATELIST
-                    echo "  Installed version: " $CURPKG >> $UPDATELIST
-                    echo "  Repo version: " \
-                        $NAME-$NEWVER-$NEWARCH-${NEWBUILD}$REPO_TAG \
-                        >> $UPDATELIST
-                    echo "-$NAME" >> $SBOPKGTMP/sbopkg-update-queue
+                   if [[ $NO_NEWER -ne 1 ]]; then 
+			echo $NAME: >> $UPDATELIST
+                    	echo "  INSTALLED PACKAGE IS NEWER THAN REPO" \
+                        	>> $UPDATELIST
+                    	echo "  Installed version: " $CURPKG >> $UPDATELIST
+                    	echo "  Repo version: " \
+                        	$NAME-$NEWVER-$NEWARCH-${NEWBUILD}$REPO_TAG \
+                        	>> $UPDATELIST
+                    	echo "-$NAME" >> $SBOPKGTMP/sbopkg-update-queue
+		   fi	
                 elif [[ $PKG_VER != $NEWVER ]]; then
                     echo $NAME: >> $UPDATELIST
                     echo "  UNCLASSIFIED VERSION CHANGE" \
@@ -4771,7 +4773,7 @@ else
 fi
 
 # This is the command line options and help.
-while getopts ":b:BcD:d:e:f:g:hi:klnoPpqRrSs:uV:v" OPT; do
+while getopts ":b:BcD:d:e:f:g:hi:kloPpqRrSs:uV:v:W" OPT; do
     case $OPT in
         b ) # Download, build
             set_type build
@@ -4866,6 +4868,9 @@ while getopts ":b:BcD:d:e:f:g:hi:klnoPpqRrSs:uV:v" OPT; do
             echo $SBOVER
             exit
             ;;
+        W ) # no newer packages listed
+            NO_NEWER=1
+            ;;
         h | * ) # Help
             cat << EOF
 $SCRIPT $SBOVER
@@ -4905,6 +4910,7 @@ Options are:
                   starting with the default repo. For a list of valid repos,
                   issue '-V ?'
   -v              Print sbopkg's version on stdout.
+  -W              with '-c' exclude newer packages
 
 Note: multiple arguments to -b, -g, -i, and -s must be quoted ("pkg1 pkg2") or
 can be specified multiple times (-i foo -i bar). If using the latter syntax,
