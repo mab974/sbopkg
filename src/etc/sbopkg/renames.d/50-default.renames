@@ -402,4 +402,8 @@ python-gnupg=python3-gnupg
 alabaster=python3-alabaster
 imagesize=python3-imagesize
 PyStemmer=python3-PyStemmer
+reedsolo=python3-reedsolo
+tempita=python3-tempita
+python2-suds=suds-jurko
+IoskeleyMono=fonts-IoskeleyMono
 
